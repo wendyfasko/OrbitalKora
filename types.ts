@@ -13,7 +13,9 @@ export enum AppView {
   AI_COMPANION = 'AI_COMPANION',
   MEMBERSHIP = 'MEMBERSHIP',
   JOURNEY_MAP = 'JOURNEY_MAP',
-  RAGE_GAME = 'RAGE_GAME'
+  RAGE_GAME = 'RAGE_GAME',
+  FOCUS_GAME = 'FOCUS_GAME',
+  SENSORY_HUNT = 'SENSORY_HUNT'
 }
 
 export type ColorblindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
@@ -23,7 +25,7 @@ export interface SkillNode {
   title: string;
   description: string;
   icon: string;
-  type: 'ADHD' | 'AUTISM' | 'MENTAL_HEALTH' | 'SENSORY' | 'HEALTH';
+  type: 'ADHD' | 'AUTISM' | 'MENTAL_HEALTH' | 'SENSORY' | 'HEALTH' | 'MASTERY';
   level: number;
   status: 'locked' | 'available' | 'completed';
 }
@@ -37,6 +39,7 @@ export interface UserSettings {
   language: string;
   isPremium: boolean;
   colorblindMode: ColorblindMode;
+  showPatterns: boolean;
 }
 
 export interface UserProgress {

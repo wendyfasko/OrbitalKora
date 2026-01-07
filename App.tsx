@@ -13,7 +13,8 @@ import {
   Copyright,
   Crown,
   Map as MapIcon,
-  Eye
+  Eye,
+  Layers
 } from 'lucide-react';
 import { AppView, UserSettings, ColorblindMode } from './types';
 import LandingPage from './components/LandingPage';
@@ -29,6 +30,8 @@ import AICompanion from './components/AICompanion';
 import MembershipHub from './components/MembershipHub';
 import JourneyMap from './components/JourneyMap';
 import RageRelease from './components/Games/RageRelease';
+import FocusFlow from './components/Games/FocusFlow';
+import SensoryHunt from './components/Games/SensoryHunt';
 
 const LANGUAGES = [
   'English', 'Spanish', 'French', 'German', 'Chinese', 'Japanese', 'Arabic', 'Hindi', 'Portuguese', 'Russian', 'Italian', 'Korean', 'ASL (Text-Based)', 'Braille (Tactile-Optimized Text)'
@@ -47,7 +50,8 @@ const App: React.FC = () => {
       overwhelmMode: false,
       language: 'English',
       isPremium: false,
-      colorblindMode: 'none'
+      colorblindMode: 'none',
+      showPatterns: true
     };
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -58,10 +62,10 @@ const App: React.FC = () => {
 
   const getColorblindFilter = (mode: ColorblindMode) => {
     switch(mode) {
-      case 'protanopia': return 'sepia(0.5) hue-rotate(-30deg) saturate(1.2)';
-      case 'deuteranopia': return 'sepia(0.5) hue-rotate(30deg) saturate(1.2)';
-      case 'tritanopia': return 'sepia(0.5) hue-rotate(180deg) saturate(1.2)';
-      case 'achromatopsia': return 'grayscale(100%)';
+      case 'protanopia': return 'sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(1.1)';
+      case 'deuteranopia': return 'sepia(0.5) hue-rotate(30deg) saturate(1.2) contrast(1.1)';
+      case 'tritanopia': return 'sepia(0.5) hue-rotate(180deg) saturate(1.2) contrast(1.1)';
+      case 'achromatopsia': return 'grayscale(100%) brightness(0.9)';
       default: return 'none';
     }
   };
@@ -72,9 +76,9 @@ const App: React.FC = () => {
     switch (currentView) {
       case AppView.LANDING: return <LandingPage onGetStarted={() => { setIsAuthenticated(true); setCurrentView(AppView.DASHBOARD); }} onLogin={() => { setIsAuthenticated(true); setCurrentView(AppView.DASHBOARD); }} />;
       case AppView.DASHBOARD: return <Dashboard onNavigate={setCurrentView} isPremium={settings.isPremium} />;
-      case AppView.ADHD: return <ADHDSuite />;
+      case AppView.ADHD: return <ADHDSuite onPlayFocus={() => setCurrentView(AppView.FOCUS_GAME)} />;
       case AppView.DYSLEXIA: return <DyslexiaSuite />;
-      case AppView.AUTISM: return <AutismSuite />;
+      case AppView.AUTISM: return <AutismSuite onPlayHunt={() => setCurrentView(AppView.SENSORY_HUNT)} />;
       case AppView.MENTAL_HEALTH: return <MentalHealthSuite onPlayRage={() => setCurrentView(AppView.RAGE_GAME)} />;
       case AppView.SENSORY: return <SensorySuite overwhelmActive={false} onExit={() => {}} />;
       case AppView.MEDITATION: return <MeditationLab />;
@@ -83,19 +87,21 @@ const App: React.FC = () => {
       case AppView.MEMBERSHIP: return <MembershipHub onUpgrade={() => setSettings(s => ({...s, isPremium: true}))} />;
       case AppView.JOURNEY_MAP: return <JourneyMap onNavigate={setCurrentView} />;
       case AppView.RAGE_GAME: return <RageRelease onExit={() => setCurrentView(AppView.MENTAL_HEALTH)} />;
+      case AppView.FOCUS_GAME: return <FocusFlow onExit={() => setCurrentView(AppView.ADHD)} />;
+      case AppView.SENSORY_HUNT: return <SensoryHunt onExit={() => setCurrentView(AppView.AUTISM)} />;
       default: return <Dashboard onNavigate={setCurrentView} isPremium={settings.isPremium} />;
     }
   };
 
   return (
     <div 
-      className={`min-h-screen cosmic-bg selection:bg-indigo-500/30 transition-all duration-700 ${settings.dyslexiaFont ? 'font-dyslexic' : 'font-[Space_Grotesk]'} ${settings.highContrast ? 'contrast-125 saturate-0' : ''}`}
+      className={`min-h-screen cosmic-bg selection:bg-indigo-500/30 transition-all duration-700 ${settings.dyslexiaFont ? 'font-dyslexic' : 'font-[Space_Grotesk]'} ${settings.highContrast ? 'contrast-125' : ''} ${settings.showPatterns ? 'pattern-mode-active' : ''}`}
       style={{ filter: getColorblindFilter(settings.colorblindMode) }}
     >
       <div className="star-field" />
       
       {isAuthenticated && currentView !== AppView.LANDING && currentView !== AppView.JOURNEY_MAP && (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/40 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex items-center justify-between animate-in fade-in slide-in-from-top-4 duration-500">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/40 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setCurrentView(AppView.DASHBOARD)}>
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <Sparkles className="text-white w-5 h-5" />
@@ -106,14 +112,14 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-6">
-            <button onClick={() => setCurrentView(AppView.JOURNEY_MAP)} className="p-2.5 rounded-full bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button onClick={() => setCurrentView(AppView.JOURNEY_MAP)} className="p-2.5 rounded-full bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20" title="Journey Map">
               <MapIcon className="w-5 h-5" />
             </button>
-            <button onClick={() => setSettings(s => ({...s, overwhelmMode: !s.overwhelmMode}))} className="px-4 py-2 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold uppercase tracking-wider">
-              <ShieldAlert className="w-4 h-4 inline mr-2" /> Relief
+            <button onClick={() => setSettings(s => ({...s, overwhelmMode: !s.overwhelmMode}))} className="px-4 py-2 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-black uppercase tracking-widest">
+              Relief
             </button>
-            <button onClick={() => setIsMenuOpen(true)} className="p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white">
+            <button onClick={() => setIsMenuOpen(true)} className="p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white border border-white/10">
               <Menu className="w-5 h-5" />
             </button>
           </div>
@@ -126,15 +132,14 @@ const App: React.FC = () => {
 
       {isMenuOpen && (
         <div className="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-sm flex justify-end">
-          <div className="bg-slate-900 w-full max-w-sm h-full shadow-2xl animate-in slide-in-from-right duration-500 flex flex-col">
+          <div className="bg-slate-900 w-full max-w-sm h-full shadow-2xl flex flex-col">
             <div className="p-8 border-b border-white/5 flex justify-between items-center bg-indigo-500/5">
               <h2 className="text-xl font-bold flex items-center gap-3"><Settings className="w-5 h-5 text-indigo-400" /> Space Control</h2>
               <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-all active:scale-90"><X className="w-6 h-6"/></button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-8 space-y-10">
-              {/* Visionary Inclusion Section */}
-              <section className="space-y-6">
+            <div className="flex-1 overflow-y-auto p-8 space-y-8">
+              <section className="space-y-4">
                 <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
                   <Eye className="w-3 h-3" /> Colorblind Calibration
                 </h3>
@@ -143,16 +148,19 @@ const App: React.FC = () => {
                     <button 
                       key={mode}
                       onClick={() => setSettings(s => ({...s, colorblindMode: mode}))}
-                      className={`px-4 py-3 rounded-xl text-left text-xs font-bold capitalize transition-all border ${settings.colorblindMode === mode ? 'bg-indigo-600 border-indigo-400 text-white' : 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'}`}
+                      className={`px-4 py-3 rounded-xl text-left text-xs font-bold capitalize transition-all border ${settings.colorblindMode === mode ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg' : 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'}`}
                     >
-                      {mode.replace('none', 'Standard View')}
+                      {mode.replace('none', 'Standard')}
                     </button>
                   ))}
                 </div>
+                <ToggleSetting label="Agnostic Pattern Mode" checked={settings.showPatterns} onChange={() => setSettings(s => ({...s, showPatterns: !s.showPatterns}))} />
               </section>
 
-              <section className="space-y-6">
-                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Universal Language</h3>
+              <section className="space-y-4">
+                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Globe className="w-3 h-3" /> Language
+                </h3>
                 <select 
                   value={settings.language}
                   onChange={(e) => setSettings(s => ({...s, language: e.target.value}))}
@@ -162,10 +170,13 @@ const App: React.FC = () => {
                 </select>
               </section>
 
-              <section className="space-y-6">
-                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Accessibility</h3>
+              <section className="space-y-4">
+                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Layers className="w-3 h-3" /> Accessibility
+                </h3>
                 <ToggleSetting label="Dyslexia Font" checked={settings.dyslexiaFont} onChange={() => setSettings(s => ({...s, dyslexiaFont: !s.dyslexiaFont}))} />
                 <ToggleSetting label="High Contrast" checked={settings.highContrast} onChange={() => setSettings(s => ({...s, highContrast: !s.highContrast}))} />
+                <ToggleSetting label="Reduced Motion" checked={settings.reducedMotion} onChange={() => setSettings(s => ({...s, reducedMotion: !s.reducedMotion}))} />
               </section>
             </div>
 

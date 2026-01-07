@@ -1,9 +1,13 @@
 
 import React, { useState } from 'react';
-import { Brain, Smile, MessageCircle, Calendar, Sparkles, Send } from 'lucide-react';
+import { Brain, Smile, MessageCircle, Calendar, Sparkles, Send, Gamepad2 } from 'lucide-react';
 import { getKoraResponse } from '../services/gemini';
 
-const AutismSuite: React.FC = () => {
+interface AutismSuiteProps {
+  onPlayHunt?: () => void;
+}
+
+const AutismSuite: React.FC<AutismSuiteProps> = ({ onPlayHunt }) => {
   const [scenario, setScenario] = useState('');
   const [explanation, setExplanation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +22,7 @@ const AutismSuite: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500 pb-20">
       <div className="flex items-center gap-4 border-b border-white/10 pb-6">
         <div className="p-3 bg-indigo-500/20 rounded-2xl text-indigo-400">
           <Brain className="w-8 h-8" />
@@ -31,14 +35,14 @@ const AutismSuite: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-slate-900/40 border border-white/10 rounded-3xl p-8 space-y-6">
+          <div className="bg-slate-900/40 border border-white/10 rounded-3xl p-8 space-y-6 shadow-2xl">
             <h3 className="text-xl font-bold flex items-center gap-2 text-indigo-300"><MessageCircle className="w-5 h-5"/> Social Deconstructor</h3>
             <p className="text-sm text-slate-400">Describe a confusing social interaction to understand the "unspoken" rules.</p>
             <textarea 
               value={scenario}
               onChange={e => setScenario(e.target.value)}
               placeholder="Example: Someone said 'We should hang out sometime' but didn't pick a date..."
-              className="w-full h-32 bg-slate-900 border border-white/10 rounded-2xl p-4 text-sm text-white focus:ring-2 focus:ring-indigo-500/50 outline-none resize-none"
+              className="w-full h-32 bg-slate-950 border border-white/10 rounded-2xl p-4 text-sm text-white focus:ring-2 focus:ring-indigo-500/50 outline-none resize-none"
             />
             <button 
               onClick={handleDeconstruct}
@@ -53,6 +57,23 @@ const AutismSuite: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* New Game Callout */}
+          <button 
+            onClick={onPlayHunt}
+            className="w-full p-8 bg-gradient-to-r from-indigo-700 to-purple-800 rounded-[2.5rem] flex items-center justify-between group shadow-2xl hover:-translate-y-1 transition-all"
+          >
+            <div className="flex items-center gap-5">
+              <div className="p-4 bg-white/20 rounded-2xl"><Gamepad2 className="w-8 h-8 text-white animate-pulse" /></div>
+              <div className="text-left">
+                <h4 className="text-xl font-bold text-white tracking-tight">Sensory Scavenger Hunt</h4>
+                <p className="text-indigo-100/60 text-xs font-medium italic">Identify calming cosmic artifacts in a safe space.</p>
+              </div>
+            </div>
+            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-all">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+          </button>
         </div>
 
         <div className="space-y-6">

@@ -61,7 +61,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, isPremium }) => {
           Your <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 via-purple-300 to-pink-300 italic">Cosmic Journey</span>
         </h2>
         
-        {/* Billion Dollar "Ladder" CTA */}
         <button 
           onClick={() => onNavigate(AppView.JOURNEY_MAP)}
           className="group relative flex items-center justify-center gap-4 bg-gradient-to-r from-indigo-600 to-purple-600 px-10 py-6 rounded-[2rem] mx-auto shadow-2xl shadow-indigo-500/40 hover:-translate-y-1 active:scale-95 transition-all"
@@ -132,7 +131,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, isPremium }) => {
         <div className="flex items-center justify-center gap-2">
           <Copyright className="w-4 h-4 text-indigo-400" />
           <p className="text-xs text-slate-400 uppercase tracking-[0.2em] font-black">
-            2024 OrbitalKora • Universal Wellness Infrastructure
+            2026 OrbitalKora • Universal Wellness Infrastructure • All Rights Reserved
           </p>
         </div>
         <div className="space-y-1">

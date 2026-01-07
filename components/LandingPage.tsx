@@ -65,7 +65,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin }) => {
           <div className="flex items-center justify-center gap-2 text-slate-500">
             <Copyright className="w-3 h-3" />
             <p className="text-[10px] font-bold uppercase tracking-[0.2em]">
-              Proprietary Technology of <span className="text-indigo-400">Wendy Fasko</span>
+              2026 OrbitalKora • Wendy Fasko • All Rights Reserved
             </p>
           </div>
           <p className="text-[9px] text-slate-600 font-medium italic">
