@@ -1,0 +1,7 @@
+{
+  "name": "OrbitalKora",
+  "description": "The World’s Most Inclusive Accessibility & Neuro-Wellness Platform. An AI-powered cosmic ecosystem supporting neurodivergence, mental health, and sensory care.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
